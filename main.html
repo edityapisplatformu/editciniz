@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Edit İstek Platformu</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;400&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Montserrat', sans-serif;
+      background: linear-gradient(120deg, #f8fafc 0%, #e0e7ff 100%);
+      min-height: 100vh;
+      color: #22223b;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      animation: fadeIn 1.2s;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    .container {
+      background: #fff;
+      margin-top: 60px;
+      padding: 40px 32px 32px 32px;
+      border-radius: 18px;
+      box-shadow: 0 8px 32px rgba(60, 60, 120, 0.12);
+      max-width: 420px;
+      width: 100%;
+      text-align: center;
+      animation: slideDown 1s;
+    }
+    @keyframes slideDown {
+      from { transform: translateY(-40px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    h1 {
+      font-size: 2.2rem;
+      margin-bottom: 8px;
+      color: #3a3a7c;
+      letter-spacing: 1px;
+    }
+    .slogan {
+      font-size: 1.1rem;
+      color: #6c63ff;
+      margin-bottom: 28px;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+    }
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      margin-top: 10px;
+    }
+    input, textarea {
+      padding: 12px 14px;
+      border: 1.5px solid #d1d5db;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-family: inherit;
+      transition: border 0.2s;
+      background: #f4f7ff;
+      resize: none;
+    }
+    input:focus, textarea:focus {
+      border-color: #6c63ff;
+      outline: none;
+      background: #fff;
+    }
+    button {
+      background: linear-gradient(90deg, #6c63ff 0%, #48b1f3 100%);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 14px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+      box-shadow: 0 2px 8px rgba(76, 81, 255, 0.08);
+    }
+    button:hover {
+      background: linear-gradient(90deg, #48b1f3 0%, #6c63ff 100%);
+      transform: translateY(-2px) scale(1.03);
+    }
+    .success, .error {
+      margin-top: 18px;
+      font-size: 1rem;
+      font-weight: 500;
+      border-radius: 6px;
+      padding: 10px 0;
+      display: none;
+    }
+    .success {
+      color: #1b7e3c;
+      background: #e6f9ed;
+      display: none;
+    }
+    .error {
+      color: #b91c1c;
+      background: #ffeaea;
+      display: none;
+    }
+    .file-upload-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 4px;
+      justify-content: flex-start;
+    }
+    .file-label {
+      background: linear-gradient(90deg, #e0e7ff 0%, #f4f7ff 100%);
+      color: #3a3a7c;
+      border: 1.5px dashed #bfc6ff;
+      border-radius: 8px;
+      padding: 8px 18px;
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.2s, border 0.2s;
+      display: flex;
+      align-items: center;
+    }
+    .file-label:hover {
+      background: #e0e7ff;
+      border-color: #6c63ff;
+    }
+    .file-name {
+      font-size: 0.98rem;
+      color: #6c63ff;
+      margin-left: 4px;
+      max-width: 120px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .remove-file-btn {
+      background: #ffeaea;
+      color: #b91c1c;
+      border: none;
+      border-radius: 6px;
+      padding: 6px 12px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+    }
+    .remove-file-btn:hover {
+      background: #ffd6d6;
+      color: #a00;
+    }
+    @media (max-width: 600px) {
+      .container {
+        padding: 24px 8px;
+        margin-top: 24px;
+      }
+      h1 { font-size: 1.4rem; }
+    }
+    .notebook {
+      margin: 40px auto 0 auto;
+      max-width: 480px;
+      background: #f8fafc;
+      border-radius: 14px;
+      box-shadow: 0 2px 12px rgba(60,60,120,0.07);
+      padding: 24px 18px 18px 18px;
+      color: #22223b;
+      font-size: 1.05rem;
+    }
+    .notebook h2 {
+      margin-top: 0;
+      color: #3a3a7c;
+      font-size: 1.2rem;
+      margin-bottom: 12px;
+    }
+    #requestsList {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    #requestsList li {
+      background: #fff;
+      border-radius: 8px;
+      margin-bottom: 12px;
+      padding: 12px 14px;
+      box-shadow: 0 1px 4px rgba(60,60,120,0.06);
+      word-break: break-word;
+    }
+    .admin-btn {
+      position: fixed;
+      top: 18px;
+      right: 18px;
+      background: #6c63ff;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 18px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      z-index: 100;
+      box-shadow: 0 2px 8px rgba(76, 81, 255, 0.08);
+      transition: background 0.2s;
+    }
+    .admin-btn:hover {
+      background: #48b1f3;
+    }
+    .admin-modal {
+      display: none;
+      position: fixed;
+      z-index: 200;
+      left: 0; top: 0; width: 100vw; height: 100vh;
+      background: rgba(60,60,120,0.18);
+      align-items: center;
+      justify-content: center;
+    }
+    .admin-modal-content {
+      background: #fff;
+      padding: 32px 24px 24px 24px;
+      border-radius: 12px;
+      box-shadow: 0 4px 24px rgba(60,60,120,0.13);
+      min-width: 260px;
+      text-align: center;
+      position: relative;
+    }
+    .close-admin {
+      position: absolute;
+      top: 8px;
+      right: 12px;
+      font-size: 1.5rem;
+      color: #6c63ff;
+      cursor: pointer;
+    }
+    .admin-error {
+      color: #b91c1c;
+      margin-top: 10px;
+      font-size: 0.98rem;
+    }
+    .admin-panel {
+      display: none;
+      position: fixed;
+      top: 60px;
+      right: 24px;
+      width: 340px;
+      max-height: 70vh;
+      overflow-y: auto;
+      background: #fff;
+      border-radius: 14px;
+      box-shadow: 0 2px 16px rgba(60,60,120,0.13);
+      padding: 18px 16px 16px 16px;
+      z-index: 150;
+    }
+    .admin-panel h2 {
+      margin-top: 0;
+      color: #3a3a7c;
+      font-size: 1.1rem;
+      margin-bottom: 10px;
+    }
+    #adminRequestsList {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    #adminRequestsList li {
+      background: #f8fafc;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      padding: 10px 12px;
+      box-shadow: 0 1px 4px rgba(60,60,120,0.06);
+      word-break: break-word;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      position: relative;
+    }
+    .delete-request-btn {
+      background: #ffeaea;
+      color: #b91c1c;
+      border: none;
+      border-radius: 6px;
+      padding: 4px 10px;
+      font-size: 0.92rem;
+      font-weight: 600;
+      cursor: pointer;
+      align-self: flex-end;
+      margin-top: 2px;
+      transition: background 0.2s, color 0.2s;
+    }
+    .delete-request-btn:hover {
+      background: #ffd6d6;
+      color: #a00;
+    }
+  </style>
+  <!--
+    EmailJS Kurulumu:
+    1. https://www.emailjs.com/ adresinden ücretsiz hesap aç.
+    2. "Email Services" kısmından Gmail veya başka bir e-posta servisini bağla.
+    3. "Email Templates" kısmında bir şablon oluştur. (user_email ve edit_request alanlarını ekle)
+    4. "Integration" kısmından USER_ID, SERVICE_ID ve TEMPLATE_ID bilgilerini alıp yukarıdaki yerlere yaz.
+    5. Artık formlar doğrudan axiomiqh@gmail.com adresine gidecek.
+  -->
+  <!--
+    Dosya yükleme için Cloudinary kullanımı:
+    1. https://cloudinary.com/ adresinden ücretsiz hesap aç.
+    2. Media Library > Upload Settings > Upload Presets kısmından bir preset oluştur (unsigned olmalı).
+    3. YOUR_CLOUD_NAME ve YOUR_UPLOAD_PRESET bilgilerini kodda ilgili yerlere yaz.
+    4. EmailJS şablonuna file_url alanını ekle.
+    5. Artık kullanıcılar dosya yükleyip, linkini e-posta ile gönderebilir.
+  -->
+</head>
+<body>
+  <div class="container" id="mainContainer">
+    <h1>Edit İstek Platformu</h1>
+    <div class="slogan">Hayalindeki düzenlemeyi bize ilet, <b>en iyi edit</b> seninle olsun!</div>
+    <form id="editForm">
+      <input type="email" id="userEmail" name="userEmail" placeholder="E-posta adresin" required>
+      <textarea id="editRequest" name="editRequest" rows="5" placeholder="Edit isteğini buraya yaz..." required></textarea>
+      <div class="file-upload-wrapper">
+        <label for="fileInput" class="file-label">
+          <span id="fileLabelText">Dosya seç (isteğe bağlı)</span>
+          <input type="file" id="fileInput" name="fileInput" accept="image/*,.pdf,.doc,.docx,.txt" style="display:none">
+        </label>
+        <span id="selectedFileName" class="file-name"></span>
+        <button type="button" id="removeFileBtn" class="remove-file-btn" style="display:none">Dosyayı Kaldır</button>
+      </div>
+      <button type="submit">İsteğini Gönder</button>
+    </form>
+    <div class="success" id="successMsg">İsteğin başarıyla kaydedildi!</div>
+    <div class="error" id="errorMsg">Bir hata oluştu. Lütfen tekrar dene.</div>
+  </div>
+  <div class="notebook" id="notebook" style="display:none">
+    <h2>Gelen İstekler (Sadece Senin İçin)</h2>
+    <ul id="requestsList"></ul>
+  </div>
+  <button id="adminLoginBtn" class="admin-btn">Admin Girişi</button>
+  <div class="admin-modal" id="adminModal">
+    <div class="admin-modal-content">
+      <span id="closeAdminModal" class="close-admin">&times;</span>
+      <h2>Admin Girişi</h2>
+      <input type="password" id="adminPassword" placeholder="Şifre">
+      <button id="adminSubmitBtn">Giriş Yap</button>
+      <div id="adminError" class="admin-error"></div>
+    </div>
+  </div>
+  <div class="admin-panel" id="adminPanel" style="display:none">
+    <h2>nodereno</h2>
+    <ul id="adminRequestsList"></ul>
+  </div>
+  <script>
+    // EmailJS ve Cloudinary kaldırıldı
+    // document.getElementById('notebook').style.display = 'block'; // Bu satır kaldırıldı
+
+    // İstekleri hem not defterine hem admin paneline ekle
+    function addRequestToLists(userEmail, editRequest, fileName) {
+      // Not defteri
+      const li = document.createElement('li');
+      li.innerHTML = `<b>E-posta:</b> ${userEmail}<br><b>İstek:</b> ${editRequest}` + (fileName ? `<br><b>Dosya:</b> ${fileName}` : '');
+      document.getElementById('requestsList').appendChild(li);
+      // Admin paneli
+      const adminLi = document.createElement('li');
+      adminLi.innerHTML = `<b>E-posta:</b> ${userEmail}<br><b>İstek:</b> ${editRequest}` + (fileName ? `<br><b>Dosya:</b> ${fileName}` : '');
+      const delBtn = document.createElement('button');
+      delBtn.textContent = 'Sil';
+      delBtn.className = 'delete-request-btn';
+      delBtn.onclick = function() {
+        adminLi.remove();
+      };
+      adminLi.appendChild(delBtn);
+      document.getElementById('adminRequestsList').appendChild(adminLi);
+    }
+    document.getElementById('editForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const userEmail = document.getElementById('userEmail').value;
+      const editRequest = document.getElementById('editRequest').value;
+      const fileInput = document.getElementById('fileInput');
+      let fileName = '';
+      if (fileInput.files.length > 0) {
+        fileName = fileInput.files[0].name;
+      }
+      addRequestToLists(userEmail, editRequest, fileName);
+      document.getElementById('successMsg').style.display = 'block';
+      document.getElementById('errorMsg').style.display = 'none';
+      document.getElementById('editForm').reset();
+      document.getElementById('selectedFileName').textContent = '';
+      document.getElementById('removeFileBtn').style.display = 'none';
+      setTimeout(()=>{
+        document.getElementById('successMsg').style.display = 'none';
+      }, 2000);
+    });
+
+    document.getElementById('fileInput').addEventListener('change', function(e) {
+      const fileInput = e.target;
+      const fileNameSpan = document.getElementById('selectedFileName');
+      const removeBtn = document.getElementById('removeFileBtn');
+      if (fileInput.files.length > 0) {
+        fileNameSpan.textContent = fileInput.files[0].name;
+        removeBtn.style.display = 'inline-block';
+      } else {
+        fileNameSpan.textContent = '';
+        removeBtn.style.display = 'none';
+      }
+    });
+    document.getElementById('removeFileBtn').addEventListener('click', function() {
+      const fileInput = document.getElementById('fileInput');
+      fileInput.value = '';
+      document.getElementById('selectedFileName').textContent = '';
+      this.style.display = 'none';
+    });
+    // Admin modal aç/kapat
+    const adminLoginBtn = document.getElementById('adminLoginBtn');
+    const adminModal = document.getElementById('adminModal');
+    const closeAdminModal = document.getElementById('closeAdminModal');
+    adminLoginBtn.onclick = () => { adminModal.style.display = 'flex'; };
+    closeAdminModal.onclick = () => { adminModal.style.display = 'none'; document.getElementById('adminPassword').value = ''; document.getElementById('adminError').textContent = ''; };
+    window.onclick = function(event) {
+      if (event.target == adminModal) {
+        adminModal.style.display = 'none';
+        document.getElementById('adminPassword').value = '';
+        document.getElementById('adminError').textContent = '';
+      }
+    };
+    // Admin giriş kontrolü
+    document.getElementById('adminSubmitBtn').onclick = function() {
+      const pass = document.getElementById('adminPassword').value;
+      if (pass === '974501Kk_') {
+        document.getElementById('adminPanel').style.display = 'block';
+        document.getElementById('notebook').style.display = 'block';
+        document.getElementById('mainContainer').style.display = 'none';
+        document.getElementById('adminLoginBtn').style.display = 'none';
+        adminModal.style.display = 'none';
+        document.getElementById('adminPassword').value = '';
+        document.getElementById('adminError').textContent = '';
+      } else {
+        document.getElementById('adminError').textContent = 'Şifre yanlış!';
+      }
+    };
+  </script>
+</body>
+</html> 
